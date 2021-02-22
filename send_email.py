@@ -26,4 +26,4 @@ class email:
         server.login(self.sender_email, self.password)
         print("Login success")
         server.sendmail(self.sender_email, self.rec_email, text)
-        print("Email has been sent to ", self.rec_email)
+        print("Email has been sent!")

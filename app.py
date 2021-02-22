@@ -53,22 +53,17 @@ while True:
         # If the last entry indicates a buy or a sell, then send an email
         if(stockdata.iloc[-1]['Position'] == 1):
             subject = f'BUY {stock}'
-            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to buy some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
+            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to buy some {stock} stock.\n\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
             print(subject)
             emodel.send_email(subject, message)
         elif(stockdata.iloc[-1]['Position'] == -1):
             subject = f'SELL {stock}'
-            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to sell some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
+            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to sell some {stock} stock.\n\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
             print(subject)
             emodel.send_email(subject, message)
         else:
             # If we are holding then we do not want to send an email
-            # subject = f'HOLD {stock}'
-            # print(subject)
-
             subject = f'HOLD {stock}'
-            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to hold some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
             print(subject)
-            emodel.send_email(subject, message)
 
-    time.sleep(3600)
+    time.sleep(86400)
