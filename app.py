@@ -15,6 +15,7 @@ as financial advice in any way.
 from send_email import email
 import yfinance as yf
 import numpy as np
+import time
 
 # A list of stocks you want to track
 stocklist = ['ETH-USD', 'BTC-USD', 'AAPL', 'TSLA', 'AMZN']
@@ -24,40 +25,50 @@ long_ma = 50
 period = '2y'
 emodel = email()
 
-for stock in stocklist:
 
-    # Download the stock data for each day from yfinance
-    stockdata = yf.download(tickers=stock, period=period, interval='1d')
-    # We are going to use the close price as the predictor
-    # Therefore we drop the rest of the tables
-    stockdata = stockdata.drop(
-        ['Volume', 'Open', 'High', 'Low', 'Adj Close'], axis=1)
+while True:
 
-    # Create the shorter exponential moving average column
-    stockdata[f'{short_ma}_EMA'] = stockdata['Close'].ewm(
-        span=short_ma, adjust=False).mean()
-    # Create the longer exponential moving average column
-    stockdata[f'{long_ma}_EMA'] = stockdata['Close'].ewm(
-        span=long_ma, adjust=False).mean()
+    for stock in stocklist:
 
-    stockdata['Signal'] = 0.0
-    stockdata['Signal'] = np.where(
-        stockdata[f'{short_ma}_EMA'] > stockdata[f'{long_ma}_EMA'], 1.0, 0.0)
+        # Download the stock data for each day from yfinance
+        stockdata = yf.download(tickers=stock, period=period, interval='1d')
+        # We are going to use the close price as the predictor
+        # Therefore we drop the rest of the tables
+        stockdata = stockdata.drop(
+            ['Volume', 'Open', 'High', 'Low', 'Adj Close'], axis=1)
 
-    stockdata['Position'] = stockdata['Signal'].diff()
+        # Create the shorter exponential moving average column
+        stockdata[f'{short_ma}_EMA'] = stockdata['Close'].ewm(
+            span=short_ma, adjust=False).mean()
+        # Create the longer exponential moving average column
+        stockdata[f'{long_ma}_EMA'] = stockdata['Close'].ewm(
+            span=long_ma, adjust=False).mean()
 
-    # If the last entry indicates a buy or a sell, then send an email
-    if(stockdata.iloc[-1]['Position'] == 1):
-        subject = f'BUY {stock}'
-        message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to buy some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
-        print(subject)
-        emodel.send_email(subject, message)
-    elif(stockdata.iloc[-1]['Position'] == -1):
-        subject = f'SELL {stock}'
-        message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to sell some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
-        print(subject)
-        emodel.send_email(subject, message)
-    else:
-        # If we are holding then we do not want to send an email
-        subject = f'HOLD {stock}'
-        print(subject)
+        stockdata['Signal'] = 0.0
+        stockdata['Signal'] = np.where(
+            stockdata[f'{short_ma}_EMA'] > stockdata[f'{long_ma}_EMA'], 1.0, 0.0)
+
+        stockdata['Position'] = stockdata['Signal'].diff()
+
+        # If the last entry indicates a buy or a sell, then send an email
+        if(stockdata.iloc[-1]['Position'] == 1):
+            subject = f'BUY {stock}'
+            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to buy some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
+            print(subject)
+            emodel.send_email(subject, message)
+        elif(stockdata.iloc[-1]['Position'] == -1):
+            subject = f'SELL {stock}'
+            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to sell some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
+            print(subject)
+            emodel.send_email(subject, message)
+        else:
+            # If we are holding then we do not want to send an email
+            # subject = f'HOLD {stock}'
+            # print(subject)
+
+            subject = f'HOLD {stock}'
+            message = f"Hi Mitch,\n\nI just thought I would let you know that it may be a good idea to hold some {stock} stock.\nThe current price in USD is {round(stockdata.iloc[-1]['Close'],2)}.\n\nKind regards,\n\nMietsBot"
+            print(subject)
+            emodel.send_email(subject, message)
+
+    time.sleep(3600)
