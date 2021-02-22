@@ -1,6 +1,8 @@
 import smtplib
 from os import environ
 
+# A class that is used to send an email
+
 
 class email:
 
