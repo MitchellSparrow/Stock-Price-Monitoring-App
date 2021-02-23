@@ -18,7 +18,8 @@ import numpy as np
 import time
 
 # A list of stocks you want to track
-stocklist = ['ETH-USD', 'BTC-USD', 'AAPL', 'TSLA', 'AMZN']
+stocklist = ['ETH-USD', 'BTC-USD', 'AAPL', 'TSLA',
+             'AMZN', 'BCH-USD', 'GOOGL', 'LTC-USD', 'XLM-USD']
 
 short_ma = 20
 long_ma = 50
