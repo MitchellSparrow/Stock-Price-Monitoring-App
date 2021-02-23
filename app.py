@@ -23,7 +23,7 @@ stocklist = ['ETH-USD', 'BTC-USD', 'AAPL', 'TSLA',
 
 short_ma = 20
 long_ma = 50
-period = '2y'
+period = '3mo'
 emodel = email()
 
 
@@ -32,7 +32,7 @@ while True:
     for stock in stocklist:
 
         # Download the stock data for each day from yfinance
-        stockdata = yf.download(tickers=stock, period=period, interval='1d')
+        stockdata = yf.download(tickers=stock, period=period, interval='60m')
         # We are going to use the close price as the predictor
         # Therefore we drop the rest of the tables
         stockdata = stockdata.drop(
@@ -67,4 +67,4 @@ while True:
             subject = f'HOLD {stock}'
             print(subject)
 
-    time.sleep(86400)
+    time.sleep(3600)
